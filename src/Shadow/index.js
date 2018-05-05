@@ -1,19 +1,23 @@
-const updateReported = require('./update');
+const shadowUpdater = require('./update');
+
+let updater;
 let myBroker;
-let currentState;
+let currentState = {};
 
 const updateReducer = (state, action) => {
   switch (true) {
     case action.reported !== undefined:
-      return updateReported(state, action.reported, myBroker);
+      return updater.reported(state, action);
+    case action.desired !== undefined:
+      return updater.desired(state, action);
     default:
       return state;
   }
 };
 
 const mainReducer = (state = {}, action) => {
-  switch (action.topic) {
-    case 'superToi/shadow/update':
+  switch (true) {
+    case action.topic.endsWith('shadow/update'):
       return updateReducer(state, action);
     default:
       return state;
@@ -27,15 +31,18 @@ const messageProcessor = (topic, message) => {
     topic,
     ...jsonState,
   };
-  currentState = mainReducer(currentState, action)
+  const deviceName = topic.split('/')[0];
+  // console.log(deviceName);
+  currentState[deviceName] = mainReducer(currentState[deviceName], action)
 };
 
 const init = (broker) => {
   myBroker = broker
+  updater = shadowUpdater(broker);
   // fired when a message is received
   myBroker.on('published', function(packet, client) {
-    // console.log(client ? client.id : '*', packet.topic, packet.payload.toString());
-    if (client !== undefined) {
+    console.log(client ? client.id : '*', packet.topic, packet.payload.toString());
+    if (client !== undefined && packet.topic.includes('shadow')) {
       messageProcessor(packet.topic, packet.payload.toString());
     }
   });

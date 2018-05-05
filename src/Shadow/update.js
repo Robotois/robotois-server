@@ -9,32 +9,58 @@ const buildMeta = (reported) => Object.keys(reported)
     {}
   );
 
-
-const updateReported = (state, reported, broker) => {
-  const meta = Object.keys(reported).reduce(
+const updateState = (state, newState, updateType) => {
+  const meta = Object.keys(newState).reduce(
     (result, category) => ({
       ...result,
-      [category]: buildMeta(reported[category])
+      [category]: buildMeta(newState[category])
     }),
     {}
   );
-  const acceptedState = { reported: { ...reported }, metadata: { ...meta } };
-  broker.publish({
-    topic: 'superToi/shadow/update/accepted',
-    payload: JSON.stringify(acceptedState),
-    qos: 1,
-  });
-  return {
+  const newMeta = { [updateType]: { ...meta } };
+  const acceptedState = {
+    [updateType]: { ...newState },
+    metadata: newMeta,
+  };
+  const updatedState = {
     ...state,
-    reported: {
-      ...state.reported,
-      ...reported,
+    [updateType]: {
+      ...state[updateType],
+      ...newState,
     },
     metadata: {
       ...state.metadata,
-      ...meta
+      ...newMeta
     }
-  }
+  };
+  return {
+    acceptedState,
+    updatedState
+  };
 };
 
-module.exports = updateReported;
+const updater = {
+  publishAccepted(topic, state) {
+    this.broker.publish({
+      topic: `${topic}/accepted`,
+      payload: JSON.stringify(state),
+      qos: 1,
+    });
+  },
+  reported(state, { reported, topic }) {
+    const { acceptedState, updatedState } = updateState(state, reported, 'reported');
+    this.publishAccepted(topic, acceptedState);
+    return updatedState;
+  },
+  desired(state, { desired, topic }) {
+    const { acceptedState, updatedState } = updateState(state, desired, 'desired');
+    this.publishAccepted(topic, acceptedState);
+    return updatedState;
+  },
+}
+
+const creator = (broker) => {
+  return Object.assign(Object.create(updater), { broker });
+}
+
+module.exports = creator;
