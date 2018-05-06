@@ -53,8 +53,7 @@
         "no-useless-escape": 2,
         "require-yield": 2,
         "use-isnan": 2,
-        "valid-typeof": 2,
-        "no-var": 2
+        "valid-typeof": 2
     },
     "env": {
         "node": true

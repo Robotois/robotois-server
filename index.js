@@ -1,2 +1,2 @@
+require('./src/server');
 require('./src');
-require('./src/apollo-server');

@@ -1,40 +1,35 @@
 const { round } = require('../shared/shared');
 
-let myTopic;
-let myInstance;
-const motorReference = 35;
-let prevValue = -1;
-let mqttClient;
+function Motor({ client, topic, instance = 'motor' }) {
+  this.client = client;
+  this.topic = topic;
+  this.speed = 0;
+  this.instance = instance;
+}
+// Motor.prototype.initClient = function initClient() {
+//   this.client.subscribe(this.topic, { qos: 1 });
+//   // this.client.on('message', this.messageProcessor.bind(this));
+//   this.write(0);
+// };
 
-const init = (client, instance = "motor", topic = 'shadow/sensors') => {
-  mqttClient = client;
-  myTopic = topic;
-  myInstance = instance;
-};
-
-const publishValue = (value) =>
-  mqttClient.publish(
-    `${myTopic}/update`,
-    JSON.stringify({
+Motor.prototype.setSpeed = function setSpeed(value) {
+  this.speed = value !== undefined ? value : this.speed;
+  if (this.client !== undefined) {
+    const message = {
       reported: {
         motors: {
-          [myInstance]: value,
+          [this.instance]: this.speed,
         }
       }
-    }),
-    { qos: 1 });
-
-const getValue = () => {
-  const value = (Math.random() * 10 - 5) + motorReference;
-  const roundedValue = round(value, 1);
-  if (roundedValue !== prevValue) {
-    publishValue(roundedValue);
-    prevValue = roundedValue
-  } else {
-    // console.log('same temp value:', roundedValue);
+    };
+    this.client.publish(this.topic, JSON.stringify(message), { qos: 1 });
   }
-  return value;
 };
 
-exports.getValue = getValue;
-exports.init = init;
+const motorCreator = ({ client, topic, instance }) => {
+  const myMotor = new Motor({ client, topic, instance });
+  // myMotor.initClient();
+  return myMotor;
+};
+
+module.exports = motorCreator;

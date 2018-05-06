@@ -1,10 +1,20 @@
 const moment = require('moment');
 
+const oneLevelMerge = (mainObj, obj) => Object.keys(mainObj).reduce(
+  (result, key) => ({
+    ...result,
+    [key]: {
+      ...mainObj[key],
+      ...(obj[key] ? obj[key] : {}),
+    }
+  }),
+  {});
+
 const buildMeta = (reported) => Object.keys(reported)
   .reduce(
     (result, key) => ({
       ...result,
-      [key]: moment().utcOffset(-5)
+      [key]: moment().utcOffset(-5),
     }),
     {}
   );
@@ -22,15 +32,17 @@ const updateState = (state, newState, updateType) => {
     [updateType]: { ...newState },
     metadata: newMeta,
   };
+  // console.log('updateState:', oneLevelMerge(state[updateType], newState));
   const updatedState = {
     ...state,
     [updateType]: {
-      ...state[updateType],
-      ...newState,
+      ...oneLevelMerge(state[updateType], newState),
     },
     metadata: {
       ...state.metadata,
-      ...newMeta
+      [updateType]: {
+        ...(state.metadata ? oneLevelMerge(state.metadata[updateType], meta) : meta),
+      }
     }
   };
   return {
@@ -50,6 +62,8 @@ const updater = {
   reported(state, { reported, topic }) {
     const { acceptedState, updatedState } = updateState(state, reported, 'reported');
     this.publishAccepted(topic, acceptedState);
+    // console.log('updatedState:', updatedState);
+    // console.log('updatedMeta:', acceptedState.metadata);
     return updatedState;
   },
   desired(state, { desired, topic }) {

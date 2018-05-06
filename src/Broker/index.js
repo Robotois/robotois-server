@@ -1,13 +1,13 @@
-const Express = require('express');
-const logger = require('morgan');
+// const Express = require('express');
+// const logger = require('morgan');
 const mosca = require('mosca')
 const redis = require('redis');
 
-const app = new Express();
-app.use(logger('tiny'));
-app.listen(8082, () => {
-  console.log('HTTP Server listening on port 8082');
-});
+// const app = new Express();
+// app.use(logger('tiny'));
+// app.listen(8082, () => {
+//   console.log('HTTP Server listening on port 8082');
+// });
 
 const ascoltatore = {
   type: 'redis',
