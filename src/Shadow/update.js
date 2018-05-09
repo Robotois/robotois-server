@@ -1,5 +1,11 @@
 const moment = require('moment');
 
+const merge = (mainObj, obj) => {
+  const mainKeys = Object.keys(mainObj);
+  const newKeys = Object.keys(obj);
+
+}
+
 const oneLevelMerge = (mainObj, obj) => Object.keys(mainObj).reduce(
   (result, key) => ({
     ...result,
@@ -41,7 +47,7 @@ const updateState = (state, newState, updateType) => {
     metadata: {
       ...state.metadata,
       [updateType]: {
-        ...(state.metadata ? oneLevelMerge(state.metadata[updateType], meta) : meta),
+        ...(state.metadata && state.metadata[updateType] ? oneLevelMerge(state.metadata[updateType], meta) : meta),
       }
     }
   };

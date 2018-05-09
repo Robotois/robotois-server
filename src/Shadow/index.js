@@ -14,6 +14,15 @@ let currentState = {
         basePump: 0,
       },
     },
+    desired: {
+      tasks: {
+        control: {
+          running: false,
+          phValue: 7,
+          tempValue: 20,
+        }
+      }
+    }
   },
 };
 
