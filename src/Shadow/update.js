@@ -6,15 +6,16 @@ const merge = (mainObj, obj) => {
 
 }
 
-const oneLevelMerge = (mainObj, obj) => Object.keys(mainObj).reduce(
+const oneLevelMerge = (mainObj, obj) => Object.keys(obj).reduce(
   (result, key) => ({
     ...result,
     [key]: {
-      ...mainObj[key],
-      ...(obj[key] ? obj[key] : {}),
+      ...obj[key],
+      // ...mainObj[key],
+      // ...(obj[key] ? obj[key] : {}),
     }
   }),
-  {});
+  { ...mainObj });
 
 const buildMeta = (reported) => Object.keys(reported)
   .reduce(
@@ -42,12 +43,12 @@ const updateState = (state, newState, updateType) => {
   const updatedState = {
     ...state,
     [updateType]: {
-      ...oneLevelMerge(state[updateType], newState),
+      ...oneLevelMerge(state[updateType] || {}, newState),
     },
     metadata: {
       ...state.metadata,
       [updateType]: {
-        ...(state.metadata && state.metadata[updateType] ? oneLevelMerge(state.metadata[updateType], meta) : meta),
+        ...(state.metadata && state.metadata[updateType] ? oneLevelMerge(state.metadata[updateType] || {}, meta) : meta),
       }
     }
   };

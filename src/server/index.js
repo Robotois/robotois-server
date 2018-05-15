@@ -34,5 +34,5 @@ app.use(logger('tiny'));
 app.use('/wifi', wifiRoutes);
 
 app.listen(8082, () => {
-  console.log('Go to http://localhost:3000/graphiql to run queries!');
+  console.log('Go to http://localhost:8082/graphiql to run queries!');
 });
