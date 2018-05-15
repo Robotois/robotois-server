@@ -1,7 +1,10 @@
-const jsonParser = require('../shared/json-parser');
+// const { round } = require('../shared/shared');
 const mqtt = require('mqtt');
+
+const jsonParser = require('../shared/json-parser');
 // const phSensor = require('./PhSensor');
 // const tempSensor = require('./TempSensor');
+// const motor = require('./motors');
 const relay = require('./relay');
 
 // const ioModules = {
@@ -12,6 +15,9 @@ const relay = require('./relay');
 // };
 
 let client;
+// let motor1;
+// let motor2;
+// let speed;
 let devices =  [];
 
 const init = () => {
@@ -39,14 +45,18 @@ const init = () => {
         device.device.messageProcessor(topic, jsonState)
       }
     });
-    // ioModules.sensors.ph.init(client, 'superToi/shadow');
-    // ioModules.sensors.temp.init(client, 'superToi/shadow');
-    // sw1 = relay({ client, topic: 'switch1/shadow/update'});
+    // motor1 = motor({ client, topic: 'superToi/shadow/update', instance: 'motor1' })
+    // motor2 = motor({ client, topic: 'superToi/shadow/update', instance: 'motor2' })
+    // phSensor.init(client, 'superToi/shadow');
+    // tempSensor.init(client, 'superToi/shadow');
     // setInterval(() => {
-    //   ioModules.sensors.ph.getValue();
-    //   ioModules.sensors.temp.getValue();
-    //   sw1.toggle();
-    // }, 2000);
+    //   phSensor.getValue();
+    //   tempSensor.getValue();
+    //   speed = (Math.random() * 10 - 0.25) + 35;
+    //   motor1.setSpeed(round(speed, 1));
+    //   speed = (Math.random() * 10 - 0.25) + 45;
+    //   motor2.setSpeed(round(speed, 1));
+    // }, 3000);
   })
 }
 
