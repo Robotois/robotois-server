@@ -1,13 +1,6 @@
-// const Express = require('express');
-// const logger = require('morgan');
 const mosca = require('mosca')
 const redis = require('redis');
-
-// const app = new Express();
-// app.use(logger('tiny'));
-// app.listen(8082, () => {
-//   console.log('HTTP Server listening on port 8082');
-// });
+const shadowService = require('../Shadow');
 
 const ascoltatore = {
   type: 'redis',
@@ -47,8 +40,13 @@ const init = () => new Promise((resolve, reject) => {
 
   // // fired when a message is received
   // server.on('published', function(packet, client) {
-  //   console.log('Published:', client ? client.id : undefined, packet.topic, packet.payload.toString());
+  //   // console.log('Published:', client ? client.id : undefined, packet.topic, packet.payload.toString());
+  //   console.log('Published:', client ? client.id : undefined, packet.topic);
   // });
 });
 
 module.exports = init;
+
+init().then((broker) => {
+  shadowService(broker);
+});

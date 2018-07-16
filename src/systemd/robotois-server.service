@@ -1,0 +1,17 @@
+[Unit]
+Description=Robotois Server - Backend application
+Wants=redis.service
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/robotois-server
+ExecStart=/usr/local/bin/node index.js
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=robotois-server
+#Environment=NODE_ENV=production PORT=1337
+
+[Install]
+WantedBy=multi-user.target

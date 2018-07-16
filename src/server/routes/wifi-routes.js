@@ -1,9 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const os = require('os');
 const { connectWifi, startAP } = require('robotois-wifi-config');
 const iwlist = require('wireless-tools/iwlist');
-const command = require('../robotois-reset/commands');
+const command = require('../../shared/commands');
 
 const router = express.Router();
 
@@ -53,7 +52,7 @@ router.get('/hostname', (req, res) => {
 });
 
 router.get('/start-ap', (req, res) => {
-  startAP();
+  startAP('Robotois', 'r0b0t01s');
   // const hostname = os.hostname();
   res.status(200).json({
     ok: 'ok',

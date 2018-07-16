@@ -2,29 +2,7 @@ const shadowUpdater = require('./update');
 
 let updater;
 let myBroker;
-let currentState = {
-  superToi: {
-    reported: {
-      sensors: {
-        ph: 0,
-        temp: 0,
-      },
-      motors: {
-        acidPump: 0,
-        basePump: 0,
-      },
-    },
-    desired: {
-      tasks: {
-        control: {
-          running: false,
-          phValue: 7,
-          tempValue: 20,
-        }
-      }
-    }
-  },
-};
+let currentState = {};
 
 const updateReducer = (state, action) => {
   switch (true) {
@@ -43,10 +21,10 @@ const mainReducer = (state = {}, action) => {
       return updateReducer(state, action);
     case action.topic.endsWith('shadow/get'):
       myBroker.publish({
-            topic: `${action.topic}/accepted`,
-            payload: JSON.stringify(state),
-            qos: 1,
-          });
+        topic: `${action.topic}/accepted`,
+        payload: JSON.stringify(state),
+        qos: 1,
+      });
       return state;
     default:
       return state;
@@ -69,7 +47,7 @@ const messageProcessor = (topic, message) => {
   };
   const deviceName = topic.split('/')[0];
   currentState[deviceName] = mainReducer(currentState[deviceName], action)
-  // console.log('updatedState:', currentState[deviceName]);
+  // console.log('updatedState:', JSON.stringify(currentState[deviceName]));
 };
 
 const init = (broker) => {
@@ -77,8 +55,8 @@ const init = (broker) => {
   updater = shadowUpdater(broker);
   // fired when a message is received
   myBroker.on('published', function(packet, client) {
-    // console.log(client ? client.id : '*', packet.topic, packet.payload.toString());
     if (client !== undefined && packet.topic.includes('shadow')) {
+      // console.log(packet.topic, packet.payload.toString());
       messageProcessor(packet.topic, packet.payload.toString());
     }
   });

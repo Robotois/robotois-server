@@ -10,8 +10,8 @@ const oneLevelMerge = (mainObj, obj) => Object.keys(obj).reduce(
   (result, key) => ({
     ...result,
     [key]: {
+      ...mainObj[key],
       ...obj[key],
-      // ...mainObj[key],
       // ...(obj[key] ? obj[key] : {}),
     }
   }),
