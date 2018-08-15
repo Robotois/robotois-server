@@ -36,17 +36,30 @@ function disableMonitor() {
 
 function motorTest() {
   let stringMessage;
+  // stringMessage = JSON.stringify({
+  //   desired: {
+  //     motors: {
+  //       motor1: 40,
+  //       motor2: 30,
+  //     }
+  //   }
+  // });
+  // this.statePublisher(stringMessage);
+  //
+  // setTimeout(() => {
+  //   this.stopAll()
+  // }, 10000);
   setInterval(() => {
     stringMessage = JSON.stringify({
       desired: {
         motors: {
-          motor1: Math.floor(Math.random() * 50),
-          // motor2: Math.floor(Math.random() * 50),
+          motor1: Math.floor(Math.random() * 40),
+          motor2: Math.floor(Math.random() * 40),
         }
       }
     });
     this.statePublisher(stringMessage);
-  }, 2000);
+  }, 3000);
 }
 
 function subscriber() {
@@ -71,9 +84,9 @@ function stopAll() {
 }
 
 function release() {
+  this.motors.release();
   this.stopAll();
   this.leds.allOff();
-  this.motors.release();
   this.phSensor.disableMonitor();
   this.tempSensor.disableMonitor();
 }
@@ -139,7 +152,6 @@ function runer() {
   .then((sToi) => {
     superToi = sToi;
     superToi.startMonitor();
-    superToi.controllerTest();
     // superToi.motorTest();
   });
 }

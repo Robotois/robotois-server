@@ -27,13 +27,15 @@ const stopAll = (client) => {
 }
 
 function stopButton(client) {
-  const but = button(16);
+  const but = button(23);
 
   but.addFunction(() => true, () => {
     stopAll(client)
   });
   but.addFunction((secs, ms) => (secs == 1 && ms >= 500 || secs >= 2), (secs, ms) => {
     console.log(`[SuperToi] -> Shutdown...`);
+    stopAll(client);
+    // setTimeout()
     command('sudo shutdown -h now');
   })
 }

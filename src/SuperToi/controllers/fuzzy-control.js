@@ -1,4 +1,4 @@
-const getDoser = require('../../../../phController');
+const getDoser = require('../../../../robotois-controller');
 
 function constrain(value, min, max) {
   if(value < min){
@@ -14,16 +14,16 @@ module.exports = function startFuzzy(duration) {
   let iter = 0;
   let timeout = false;
   this.controller.running = true;
-  if(duration) {
-    setTimeout(() => {
-      timeout = true;
-      this.controller.running = false;
-    }, 60000*duration);
-  }
+  // if(duration) {
+  //   setTimeout(() => {
+  //     timeout = true;
+  //     this.controller.running = false;
+  //   }, 60000*duration);
+  // }
 
   let phReading;
   let error, prevError = 0, errorChange = 0;
-  let maxPWM = 75, alkPWM = 0, acidPWM = 0;
+  let maxPWM = 50, alkPWM = 0, acidPWM = 0;
   let doserRate = 0;
 
   function run() {
@@ -44,7 +44,7 @@ module.exports = function startFuzzy(duration) {
     prevError = error;
 
     // Fuzzy control
-    doserRate = doserRate + getDoser({ error, errorChange });
+    doserRate = doserRate + getDoser({ error, errorChange })*20;
     doserRate = constrain(doserRate, -maxPWM, maxPWM);
 
     console.log('phReading:', phReading, 'Error:', error, 'doserRate:', doserRate);
@@ -54,11 +54,11 @@ module.exports = function startFuzzy(duration) {
         alkPWM = 0;
         acidPWM = 0
         break;
-      case doserRate < 0.0 && doserRate <= 20:
+      case doserRate < 0.0 && doserRate <= 15:
         alkPWM = doserRate;
         acidPWM = 0;
         break;
-      case doserRate > 0.0 && doserRate >= 20:
+      case doserRate > 0.0 && doserRate >= 15:
         acidPWM = -doserRate;
         alkPWM = 0;
         break;

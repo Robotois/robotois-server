@@ -40,8 +40,8 @@ exports.task = function task(state) {
     case true:
       if (!isUpdate) {
         this.disableMonitor();
-        this.pidController(state.phValue, state.time);
-        // fuzzyController(state.phValue, state.time);
+        this.pidController(state.phValue, state.speed);
+        // this.fuzzyController(state.phValue, state.time);
       }
       break;
     case false:

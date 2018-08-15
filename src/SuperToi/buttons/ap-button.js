@@ -28,7 +28,7 @@ const stopAll = (client) => {
 }
 
 function apButton(client) {
-  const but = button(26);
+  const but = button(24);
 
   but.addFunction((secs, ms) => (secs == 1 && ms >= 0 || secs >= 2), () => {
     // this.leds.allBlink(this.colors.error);
